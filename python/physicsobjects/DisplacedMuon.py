@@ -10,6 +10,7 @@ from itertools import combinations, product
 from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi
 from ROOT import TVector3, Math
 
+from pdb import set_trace
 
 class DisplacedMuon(PhysicsObject):
 
@@ -28,7 +29,7 @@ class DisplacedMuon(PhysicsObject):
                                                                             self.physObj.py(),
                                                                             self.physObj.pz(),
                                                                             energy)
-    
+
     def mass(self):
         '''impose the muon mass to the displaced objects, that otherwise carry none'''
         return 0.10565837
@@ -42,9 +43,10 @@ class DisplacedMuon(PhysicsObject):
 
     def track(self):
         ''' return reco::TrackRef '''   
-        return ROOT.reco.TrackRef(self.collection_, self.position_in_collection)
+        try:
+            return ROOT.reco.TrackRef(self.collection_, self.position_in_collection)
+        except:
+            print 'DisplacedMuon.track() failed'
 
-    def GetPhysObj(self):
-        return self.physObj
-        
-    
+    def muonBestTrack(self):
+        return self.track()

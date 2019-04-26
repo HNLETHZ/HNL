@@ -1,0 +1,6 @@
+<export></export>
+<library name="CMGToolsHNLPlugins" file="*.cc">
+  <use name="CMGTools/HNL"/>
+  <flags   EDM_PLUGIN="1"/>
+</library>
+

@@ -1,5 +1,51 @@
 <lcgdict>
 
  <class name="HNLKinematicVertexFitter"/>
- 
+ <class name="HNLKalmanVertexFitter"/>
+ <class name="MagneticField"/>
+<!--  <class name="IdealMagneticFieldRecord"/> -->
+<!--  <class name="edm::eventsetup::EventSetupRecord"/> -->
+<!--  <class name="edm::eventsetup::EventSetupRecordImplementation<IdealMagneticFieldRecord>"/> -->
+<!--  <class name="edm::ValidityInterval"/> -->
+<!--  <class name="map<edm::eventsetup::DataKey,const edm::eventsetup::DataProxy*>"/> -->
+<!--  <class name="edm::EventSetup*"/> -->
+ <class name="atomic<bool>"/>
+ <class name="atomic<char>"/>
+ <class name="__atomic_base<char>"/>
+<!--  <class name="edm::eventsetup::DependentRecordTag"/> -->
+<!--  <class name="edm::eventsetup::DependentRecordImplementation<IdealMagneticFieldRecord,boost::mpl::vector<MFGeometryFileRcd,RunInfoRcd,MagFieldConfigRcd,mpl_::na,mpl_::na,mpl_::na,mpl_::na,mpl_::na,mpl_::na,mpl_::na,mpl_::na,mpl_::na,mpl_::na,mpl_::na,mpl_::na,mpl_::na,mpl_::na,mpl_::na,mpl_::na,mpl_::na> >"/> -->
+<!--  <class name="edm::EventSetup"/> -->
+ <class name="MagGeometry"/>
+ <class name="MagVolume"/>
+<!--  <class name="MagFieldConfigRcd"/> -->
+ <class name="VolumeBasedMagneticField"/>
+ <class name="MagBinFinders"/>
+ <class name="MagBinFinders::GeneralBinFinderInR<double>"/>
+ <class name="MagBinFinders::GeneralBinFinderInZ<double>"/>
+ <class name="PeriodicBinFinderInPhi<float>"/>
+ <class name="BaseBinFinder<double>"/>
+ <class name="BaseBinFinder<float>"/>
+ <class name="UniformMagneticField"/>
+ <class name="OAEParametrizedMagneticField"/>
+ <class name="magfieldparam::TkBfield"/>
+ <class name="magfieldparam::BCycl<float>"/>
+ <class name="magfieldparam::BCylParam<float>"/>
+ <class name="MagneticFieldProvider<float>"/>
+ <class name="MagVolume6Faces"/>
+ <class name="MagBLayer"/>
+ <class name="MagBRod"/>
+ <class name="MagBSector"/>
+ <class name="MagBSlab"/>
+ <class name="MagELayer"/>
+ <class name="MagESector"/>
+ <class name="VolumeSide"/>
+ <class name="GloballyPositioned<float>"/>
+ <class name="TkRotation<float>"/>
+ <class name="atomic<const MagVolume*>"/>
+ <class name="__atomic_base<const MagVolume*>"/>
+ <class name="boost::intrusive_ptr<Surface>"/>
+<!-- 
+ <class name="std::vector<art::ProductID>"/>
+ <class name="std::pair<art::ProductID, std::set<art::ProductID>>"/>
+ -->
 </lcgdict>

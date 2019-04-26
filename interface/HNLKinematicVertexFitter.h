@@ -31,14 +31,18 @@
 #include "RecoVertex/VertexTools/interface/VertexDistance3D.h"
 #include "RecoVertex/VertexTools/interface/VertexDistanceXY.h"
 
+
 class HNLKinematicVertexFitter {
 
   public:
     HNLKinematicVertexFitter() {};
     virtual ~HNLKinematicVertexFitter() {};
+    
 
+    // constructed by reco::TrackRef
     reco::TransientTrack getTransientTrack(const reco::TrackRef& trackRef) {    
       reco::TransientTrack transientTrack(trackRef, paramField);
+
       return transientTrack;
     }
 
@@ -49,7 +53,7 @@ class HNLKinematicVertexFitter {
 
       for (std::vector<reco::RecoChargedCandidate>::const_iterator ilc = candidates.begin(); ilc != candidates.end(); ++ilc){
         float pmass  = ilc->mass();
-        float pmasse = 1.e-6 * pmass;
+        float pmasse = 1.e-6* pmass;
         XParticles.push_back(pFactory.particle(getTransientTrack(ilc->track()), pmass, chi, ndf, pmasse));
       }
 
@@ -60,7 +64,44 @@ class HNLKinematicVertexFitter {
         
     }
 
+    // constructed by reco::Track
+    reco::TransientTrack getTransientTrack(const reco::Track& track) {    
+      reco::TransientTrack transientTrack(track, paramField);
+
+      return transientTrack;
+    }
+
+    RefCountedKinematicTree Fit(const std::vector<reco::Track> & candidates, std::string L1L2LeptonType){
+
+      KinematicParticleFactoryFromTransientTrack pFactory;  
+      std::vector<RefCountedKinematicParticle> XParticles;
+      int i = 0;
+      for (std::vector<reco::Track>::const_iterator ilc = candidates.begin(); ilc != candidates.end(); ++ilc){
+        float pmass = 5.11e-4;
+        if (L1L2LeptonType == "ee"){
+            pmass = 5.11e-4; 
+        }
+        if (L1L2LeptonType == "mm"){
+            pmass = 1.05658e-1; 
+        }
+        if (L1L2LeptonType == "em"){
+            if (i==0){pmass = 5.11e-4;}
+            if (i==1){pmass = 1.05658e-1;}
+        }
+        float pmasse = 1.e-6 * pmass;
+        XParticles.push_back(pFactory.particle(getTransientTrack(*ilc), pmass, chi, ndf, pmasse));
+        i++;
+      }
+
+      KinematicConstrainedVertexFitter kvFitter;
+      RefCountedKinematicTree KinVtx = kvFitter.fit(XParticles); 
+      
+      return KinVtx;
+        
+    }
+
   private:
+    
     OAEParametrizedMagneticField *paramField = new OAEParametrizedMagneticField("3_8T");
     // Insignificant mass sigma to avoid singularities in the covariance matrix.
     // initial chi2 and ndf before kinematic fits. The chi2 of the reconstruction is not considered 

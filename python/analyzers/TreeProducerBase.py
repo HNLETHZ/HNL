@@ -1,6 +1,7 @@
 import numpy as np
 from PhysicsTools.Heppy.analyzers.core.TreeAnalyzerNumpy import TreeAnalyzerNumpy
-from CMGTools.HNL.analyzers.treeVariables import event_vars, vertex_vars, hnl_vars, particle_vertex_vars, particle_vars, lepton_vars, photon_vars, electron_vars, muon_vars, muon_track_extra_vars, tau_vars, tau_vars_extra, jet_vars, jet_vars_extra, geninfo_vars, l1obj_vars, hnlreco_vars, dimuon_vars
+from CMGTools.HNL.analyzers.treeVariables import event_vars, reco_hn_vars, vertex_vars, hnl_vars, particle_vertex_vars, particle_vars, lepton_vars, photon_vars, electron_vars, muon_vars, muon_track_extra_vars, tau_vars, tau_vars_extra, jet_vars, jet_vars_extra, geninfo_vars, l1obj_vars, hnlreco_vars, dimuon_vars, check_hnlreco_vars, displacedmuon_vars, gen_particle_vars, particleJet_vars
+from pdb import set_trace
 
 class TreeProducerBase(TreeAnalyzerNumpy):
 
@@ -13,8 +14,8 @@ class TreeProducerBase(TreeAnalyzerNumpy):
         if hasattr(self.cfg_ana, 'skimFunction'):
             self.skimFunction = self.cfg_ana.skimFunction
 
-    def var(self, tree, varName, type=float):
-        tree.var(varName, type)
+    def var(self, tree, varName, type=float, storageType="default"):
+        tree.var(varName, type, storageType=storageType)
 
     def vars(self, tree, varNames, type=float):
         for varName in varNames:
@@ -36,7 +37,7 @@ class TreeProducerBase(TreeAnalyzerNumpy):
     def bookGeneric(self, tree, var_list, obj_name=None):
         for var in var_list:
             names = [obj_name, var.name] if obj_name else [var.name]
-            self.var(tree, '_'.join(names), var.type)
+            self.var(tree, '_'.join(names), var.type, storageType = var.storageType)
 
     def fillGeneric(self, tree, var_list, obj, obj_name=None):
         for var in var_list:
@@ -74,12 +75,26 @@ class TreeProducerBase(TreeAnalyzerNumpy):
     def fillEvent(self, tree, event):
         self.fillGeneric(tree, event_vars, event)
 
+    # reco_hn_vars
+    def bookHNCandidate(self, tree, p_name):
+        self.bookGeneric(tree, reco_hn_vars, p_name)
+
+    def fillHNCandidate(self, tree, p_name, particle):
+        self.fillGeneric(tree, reco_hn_vars, particle, p_name)
+
     # hnl reconstruction
     def bookHNLReco(self, tree):
         self.bookGeneric(tree, hnlreco_vars)
 
     def fillHNLReco(self, tree, event):
         self.fillGeneric(tree, hnlreco_vars, event)
+
+    # check hnl reconstruction efficiency
+    def bookCheckHNLReco(self, tree):
+        self.bookGeneric(tree, check_hnlreco_vars)
+
+    def fillCheckHNLReco(self, tree, event):
+        self.fillGeneric(tree, check_hnlreco_vars, event)
 
     # Dimuon Reco
     def bookDiMuon(self, tree, p_name):
@@ -88,6 +103,12 @@ class TreeProducerBase(TreeAnalyzerNumpy):
     def fillDiMuon(self, tree, p_name, particle):
         self.fillGeneric(tree, dimuon_vars, particle, p_name)
 
+    # the muons from Dimuon
+    def bookDisplacedMuon(self, tree, p_name):
+        self.bookGeneric(tree, displacedmuon_vars, p_name)
+
+    def fillDisplacedMuon(self, tree, p_name, particle):
+        self.fillGeneric(tree, displacedmuon_vars, particle, p_name)
     # gen level hnl
     def bookHNL(self, tree, p_name):
         self.bookGeneric(tree, hnl_vars, p_name)
@@ -102,12 +123,26 @@ class TreeProducerBase(TreeAnalyzerNumpy):
     def fillVertex(self, tree, p_name, particle):
         self.fillGeneric(tree, vertex_vars, particle, p_name)
 
-    # simple particle
+    # simple particle (reco or gen)
     def bookParticle(self, tree, p_name):
         self.bookGeneric(tree, particle_vars, p_name)
 
     def fillParticle(self, tree, p_name, particle):
         self.fillGeneric(tree, particle_vars, particle, p_name)
+
+    # jet particle (reco or gen)
+    def bookParticleJet(self, tree, p_name):
+        self.bookGeneric(tree, particleJet_vars, p_name)
+
+    def fillParticleJet(self, tree, p_name, particle):
+        self.fillGeneric(tree, particleJet_vars, particle, p_name)
+
+    # simple gen particle
+    def bookSimpleGenParticle(self, tree, p_name):
+        self.bookGeneric(tree, gen_particle_vars, p_name)
+
+    def fillSimpleGenParticle(self, tree, p_name, particle):
+        self.fillGeneric(tree, gen_particle_vars, particle, p_name)
 
     # charged candidate
     def bookChargedCandidate(self, tree, p_name):
@@ -116,7 +151,7 @@ class TreeProducerBase(TreeAnalyzerNumpy):
     def fillChargedCandidate(self, tree, p_name, particle):
         self.fillGeneric(tree, particle_vars + particle_vertex_vars, particle, p_name)
 
-    # simple gen particle
+    # gen particle
     def bookGenParticle(self, tree, p_name):
         self.bookParticle(tree, p_name)
         self.var(tree, '{p_name}_pdgId'.format(p_name=p_name))
@@ -138,13 +173,13 @@ class TreeProducerBase(TreeAnalyzerNumpy):
     # lepton
     def bookLepton(self, tree, p_name):
         self.bookParticle(tree, p_name)
-#         self.bookParticle(tree, p_name + '_jet')
+        self.bookJet(tree, p_name + '_jet')
         self.bookGeneric(tree, lepton_vars, p_name)
 
     def fillLepton(self, tree, p_name, lepton):
         self.fillParticle(tree, p_name, lepton)
-#         if hasattr(lepton, 'jet'):
-#             self.fillParticle(tree, p_name + '_jet', lepton.jet)
+        if (hasattr(lepton, 'jet') and lepton != lepton.jet):
+            self.fillJet(tree, p_name + '_jet', lepton.jet)
         self.fillGeneric(tree, lepton_vars, lepton, p_name)
 
     # muon
@@ -218,19 +253,23 @@ class TreeProducerBase(TreeAnalyzerNumpy):
     def bookExtraMetInfo(self, tree):
         self.var(tree, 'puppimet_pt')
         self.var(tree, 'puppimet_phi')
-        self.var(tree, 'puppimet_mt1')
-        self.var(tree, 'puppimet_mt2')
-        self.var(tree, 'puppimet_mttotal')
-
+        self.var(tree, 'puppimet_cov00')
+        self.var(tree, 'puppimet_cov01')
+        self.var(tree, 'puppimet_cov11')
         self.var(tree, 'pfmet_pt')
         self.var(tree, 'pfmet_phi')
-        self.var(tree, 'pfmet_mt1')
-        self.var(tree, 'pfmet_mt2')
-        self.var(tree, 'pfmet_mttotal')
+        self.var(tree, 'pfmet_cov00')
+        self.var(tree, 'pfmet_cov01')
+        self.var(tree, 'pfmet_cov11')
 
     def fillExtraMetInfo(self, tree, event):
         self.fill(tree, 'puppimet_pt', event.puppimet.pt())
         self.fill(tree, 'puppimet_phi', event.puppimet.phi())
-
+        self.fill(tree, 'puppimet_cov00', event.puppimet.getSignificanceMatrix()(0,0))
+        self.fill(tree, 'puppimet_cov01', event.puppimet.getSignificanceMatrix()(0,1))
+        self.fill(tree, 'puppimet_cov11', event.puppimet.getSignificanceMatrix()(1,1))
         self.fill(tree, 'pfmet_pt', event.pfmet.pt())
         self.fill(tree, 'pfmet_phi', event.pfmet.phi())
+        self.fill(tree, 'pfmet_cov00', event.pfmet.getSignificanceMatrix()(0,0))
+        self.fill(tree, 'pfmet_cov01', event.pfmet.getSignificanceMatrix()(0,1))
+        self.fill(tree, 'pfmet_cov11', event.pfmet.getSignificanceMatrix()(1,1))

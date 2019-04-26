@@ -19,7 +19,7 @@ from PhysicsTools.Heppy.physicsobjects.Jet           import Jet
 from PhysicsTools.Heppy.physicsobjects.PhysicsObject import PhysicsObject
 from PhysicsTools.HeppyCore.utils.deltar             import deltaR, deltaPhi, inConeCollection, bestMatch
 
-from CMGTools.HNL.utils.utils                  import isAncestor, displacement2D, displacement3D, makeRecoVertex # utility functions
+from CMGTools.HNL.utils.utils                  import isAncestor, displacement2D, displacement3D, makeRecoVertex, fitVertex # utility functions
 from CMGTools.HNL.physicsobjects.HN3L          import HN3L
 from CMGTools.HNL.physicsobjects.DisplacedMuon import DisplacedMuon
 
@@ -69,7 +69,6 @@ class RecoGenAnalyzer(Analyzer):
 
     def process(self, event):
         self.readCollections(event.input)
-
         self.counters.counter('RecoGenTreeAnalyzer').inc('all events')
 
         # produce collections and map our objects to convenient Heppy objects
@@ -80,7 +79,7 @@ class RecoGenAnalyzer(Analyzer):
         event.jets        = map(Jet          , self.handles  ['jets'       ].product())
         event.dsmuons     = self.buildDisplacedMuons(self.handles['dsmuons'].product())
         event.dgmuons     = self.buildDisplacedMuons(self.handles['dgmuons'].product())
-        
+
         # vertex stuff
         event.pvs         = self.handles['pvs'     ].product()
         event.svs         = self.handles['svs'     ].product()
@@ -103,7 +102,13 @@ class RecoGenAnalyzer(Analyzer):
         self.assignVtx(event.taus     , myvtx)
 
         # all matchable objects
-        matchable = event.electrons + event.photons + event.muons + event.taus + event.dsmuons + event.dgmuons 
+#         matchable = event.electrons + event.photons + event.muons + event.taus + event.dsmuons + event.dgmuons 
+#         matchable = event.electrons + event.photons + event.muons + event.taus + event.dsmuons 
+        # matchable = event.electrons + event.photons + event.taus + event.muons + event.dsmuons + event.dgmuons 
+        matchable = event.electrons + event.photons + event.taus + event.muons
+        
+        #define the dr to cut on
+        dr_cut = 0.2
 
         # match gen to reco
         for ip in [event.the_hnl.l0(), 
@@ -111,127 +116,85 @@ class RecoGenAnalyzer(Analyzer):
                    event.the_hnl.l2()]:
             ip.bestmatch     = None
             ip.bestmatchtype = None
-            ip.matches = inConeCollection(ip, matchable, getattr(self.cfg_ana, 'drmax', 0.2), 0.)
+            ip.matches = inConeCollection(ip, matchable, getattr(self.cfg_ana, 'drmax', dr_cut), 0.)
 
             # matches the corresponding "slimmed electron" to the gen particle
             if len(event.electrons):
-                dr = np.inf
-                match, dr = bestMatch(ip,event.electrons)
-                if dr < 0.2: 
+                dr2 = np.inf
+                match, dr2 = bestMatch(ip,event.electrons)
+                if dr2 < dr_cut * dr_cut: 
                     ip.bestelectron = match
 
-            # matches the corresponding "slimmed photon" to the gen particle
-            if len(event.photons):
-                dr = np.inf
-                match, dr = bestMatch(ip,event.photons)
-                if dr < 0.2: 
-                    ip.bestphoton = match
+            # # matches the corresponding "slimmed photon" to the gen particle
+            # if len(event.photons):
+                # dr2 = np.inf
+                # match, dr2 = bestMatch(ip,event.photons)
+                # if dr2 < dr_cut * dr_cut: 
+                    # ip.bestphoton = match
 
             # matches the corresponding "slimmed muon" to the gen particle
             if len(event.muons):
-                dr = np.inf
-                match, dr = bestMatch(ip,event.muons)
-                if dr < 0.2: 
+                dr2 = np.inf
+                match, dr2 = bestMatch(ip,event.muons)
+                if dr2 < dr_cut * dr_cut: 
                     ip.bestmuon = match
+                    
             
-            # matches the corresponding "slimmed tau" to the gen particle
-            if len(event.taus):
-                dr = np.inf
-                match, dr = bestMatch(ip,event.taus)
-                if dr < 0.2: 
-                    ip.besttau = match
+            # # matches the corresponding "slimmed tau" to the gen particle
+            # if len(event.taus):
+                # dr2 = np.inf
+                # match, dr2 = bestMatch(ip,event.taus)
+                # if dr2 < dr_cut * dr_cut: 
+                    # ip.besttau = match
             
             # matches the corresponding "displaced stand alone muon" to the gen particle
             if len(event.dsmuons):
-                dr = np.inf
-                match, dr = bestMatch(ip,event.dsmuons)
-                if dr < 0.2: 
+                dr2 = np.inf
+                match, dr2 = bestMatch(ip,event.dsmuons)
+                if dr2 < dr_cut * dr_cut: 
                     ip.bestdsmuon = match
                     
             # matches the corresponding "displaced global muon" to the gen particle
             if len(event.dgmuons):
-                dr = np.inf
-                match, dr = bestMatch(ip,event.dgmuons)
-                if dr < 0.2: 
+                dr2 = np.inf
+                match, dr2 = bestMatch(ip,event.dgmuons)
+                if dr2 < dr_cut * dr_cut: 
                     ip.bestdgmuon = match
             
             # to find the best match, give precedence to any matched 
             # particle in the matching cone with the correct PDG ID
             # then to the one which is closest
             ip.matches.sort(key = lambda x : (x.pdgId()==ip.pdgId(), -deltaR(x, ip)), reverse = True )
-            if len(ip.matches):
+            
+            if len(ip.matches) and abs(ip.pdgId())==abs(ip.matches[0].pdgId()):
                 ip.bestmatch = ip.matches[0]
-                # remove already matched particles, avoid multiple matches to the same candidate
+                ip.bestmatchdR = deltaR(ip,ip.bestmatch)
+                # remove already matched particles, avoid multiple matches to the same candidate while recording the type of reconstruction
                 matchable.remove(ip.bestmatch)
+
                 # record which is which
-                if ip.bestmatch in event.electrons: ip.bestmatchtype = 0
-                if ip.bestmatch in event.photons  : ip.bestmatchtype = 1
-                if ip.bestmatch in event.muons    : ip.bestmatchtype = 2
-                if ip.bestmatch in event.taus     : ip.bestmatchtype = 3
-                if ip.bestmatch in event.dsmuons  : ip.bestmatchtype = 4
-                if ip.bestmatch in event.dgmuons  : ip.bestmatchtype = 5
+                if ip.bestmatch in event.electrons: ip.bestmatchtype = 11
+                if ip.bestmatch in event.photons  : ip.bestmatchtype = 22
+                if ip.bestmatch in event.muons    : ip.bestmatchtype = 13
+                if ip.bestmatch in event.taus     : ip.bestmatchtype = 15
+                if ip.bestmatch in event.dsmuons  : ip.bestmatchtype = 26
+                if ip.bestmatch in event.dgmuons  : ip.bestmatchtype = 39
+
+            else:
+                ip.bestmatchtype = -1 
     
         # clear it before doing it again
         event.recoSv = None
 
-
-######### DEBUG VTX MADE OUT OF DSA MUONS
-#         if len(event.dsmuons) > 2:
-#             # clear the vector
-#             self.tofit.clear()
-#             # create a RecoChargedCandidate for each reconstructed lepton and flush it into the vector
-#             for il in [event.dsmuons[0], event.dsmuons[1]]:
-#                 # if the reco particle is a displaced thing, it does not have the p4() method, so let's build it 
-#                 myp4 = ROOT.Math.LorentzVector('<ROOT::Math::PxPyPzE4D<double> >')(il.px(), il.py(), il.pz(), math.sqrt(il.mass()**2 + il.px()**2 + il.py()**2 + il.pz()**2))
-#                 ic = ROOT.reco.RecoChargedCandidate() # instantiate a dummy RecoChargedCandidate
-#                 ic.setCharge(il.charge())             # assign the correct charge
-#                 ic.setP4(myp4)                        # assign the correct p4
-#                 ic.setTrack(il.track())               # set the correct TrackRef
-#                 if ic.track().isNonnull():            # check that the track is valid, there are photons around too!
-#                     self.tofit.push_back(ic)
-#             # further sanity check: two *distinct* tracks
-#             if self.tofit.size()==2 and self.tofit[0].track() != self.tofit[1].track():
-#                 # fit it!
-#                 svtree = self.vtxfit.Fit(self.tofit) # actual vertex fitting
-#                 # check that the vertex is good
-#                 if not svtree.get().isEmpty() and svtree.get().isValid():
-#                     svtree.movePointerToTheTop()
-#                     sv = svtree.currentDecayVertex().get()
-#                     event.recoSv = makeRecoVertex(sv, kinVtxTrkSize=2) # need to do some gymastics
-#                     print 'good double dsa vertex! vx=%.2f, vy=%.2f, vz=%.2f' %(event.recoSv.x(), event.recoSv.y(), event.recoSv.z()) 
-#                     import pdb ; pdb.set_trace()
-
-
-
         # let's refit the secondary vertex, IF both leptons match to some reco particle
-        if not(event.the_hnl.l1().bestmatch is None or \
-               event.the_hnl.l2().bestmatch is None):
-            # clear the vector
-            self.tofit.clear()
-            # create a RecoChargedCandidate for each reconstructed lepton and flush it into the vector
-            for il in [event.the_hnl.l1().bestmatch, 
-                       event.the_hnl.l2().bestmatch]:
-                # if the reco particle is a displaced thing, it does not have the p4() method, so let's build it 
-                myp4 = ROOT.Math.LorentzVector('<ROOT::Math::PxPyPzE4D<double> >')(il.px(), il.py(), il.pz(), math.sqrt(il.mass()**2 + il.px()**2 + il.py()**2 + il.pz()**2))
-                ic = ROOT.reco.RecoChargedCandidate() # instantiate a dummy RecoChargedCandidate
-                ic.setCharge(il.charge())             # assign the correct charge
-                ic.setP4(myp4)                        # assign the correct p4
-                ic.setTrack(il.track())               # set the correct TrackRef
-                if ic.track().isNonnull():            # check that the track is valid, there are photons around too!
-                    self.tofit.push_back(ic)
+        pair = [event.the_hnl.l1().bestmatch, event.the_hnl.l2().bestmatch]
+        if (pair[0] != None) and\
+           (pair[1] != None) and\
+           (pair[0].physObj != pair[1].physObj):
 
-            # further sanity check: two *distinct* tracks
-            if self.tofit.size()==2 and self.tofit[0].track() != self.tofit[1].track():
-                # fit it!
-                svtree = self.vtxfit.Fit(self.tofit) # actual vertex fitting
-                # check that the vertex is good
-                if not svtree.get().isEmpty() and svtree.get().isValid():
-                    svtree.movePointerToTheTop()
-                    sv = svtree.currentDecayVertex().get()
-                    event.recoSv = makeRecoVertex(sv, kinVtxTrkSize=2) # need to do some gymastics
+            event.recoSv = fitVertex(pair)
 
             if event.recoSv:
-                
                 # primary vertex
                 pv = event.goodVertices[0]
 
@@ -268,15 +231,6 @@ class RecoGenAnalyzer(Analyzer):
                 cos = vperp.Dot(perp)/(vperp.R()*perp.R())
                 
                 event.recoSv.disp2DFromBS_cos = cos
-        
-#             if (abs(event.the_hnl.l1().pdgId()) == 11 or abs(event.the_hnl.l2().pdgId()) == 11):
-#                 if (abs(event.the_hnl.l1().bestmatch.pdgId()) == 11 or abs(event.the_hnl.l2().bestmatch.pdgId()) == 11):
-#                     if event.recoSv:
-#                         print 'lept1      \t', event.the_hnl.l1()
-#                         print 'lept2      \t', event.the_hnl.l2()
-#                         print 'lept1 match\t', event.the_hnl.l1().bestmatch
-#                         print 'lept2 match\t', event.the_hnl.l2().bestmatch                
-#                         import pdb ; pdb.set_trace()
     
         return True
     
