@@ -91,7 +91,8 @@ class HNLAnalyzer(Analyzer):
         # kinematics
         if not self.testLepKin(ele, pt, eta): return False
         # id
-        if not ele.electronID("MVA_ID_nonIso_Fall17_Loose"): return False
+        #set_trace()
+        #TODO uncomment this if not ele.electronID("MVA_ID_nonIso_Fall17_Loose"): return False
         # vertex
         if not self.testLepVtx(ele, dxy, dz): return False
         # passed
@@ -490,8 +491,8 @@ class HNLAnalyzer(Analyzer):
                                  event.the_3lep_cand.l2()]
 
         # plus any isolated electron or muon is also a good lepton rather than a jet
-        event.selMuons     = [mu  for mu  in event.muons     if self.preselectPromptMuons    (mu , pt=10) and mu .relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0)<0.15]
-        event.selElectrons = [ele for ele in event.electrons if self.preselectPromptElectrons(ele, pt=10) and ele.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0)<0.15]
+        event.selMuons     = [mu  for mu  in event.muons     if self.preselectPromptMuons    (mu , pt=10) and mu .relIso(cone_size=0.3, iso_type='dbeta', dbeta_factor=0.5, all_charged=0)<0.15]
+        event.selElectrons = [ele for ele in event.electrons if self.preselectPromptElectrons(ele, pt=10) and ele.relIso(cone_size=0.3, iso_type='dbeta', dbeta_factor=0.5, all_charged=0)<0.15]
         # RM: what about taus?
 
         event.selectedLeptons += event.selMuons

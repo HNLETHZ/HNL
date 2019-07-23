@@ -342,20 +342,19 @@ lepton_vars = [
 #        EFFECTIVE AREA CORRECTION
 # electron
 electron_vars = [
-    Variable('eid_mva_noniso_loose', lambda ele : ele.electronID('MVA_ID_nonIso_Fall17_Loose')),
-    Variable('eid_mva_noniso_wp90' , lambda ele : ele.electronID('MVA_ID_nonIso_Fall17_wp90' )),
-    Variable('eid_mva_noniso_wp80' , lambda ele : ele.electronID('MVA_ID_nonIso_Fall17_wp80' )),
-    Variable('eid_mva_iso_loose'   , lambda ele : ele.electronID('MVA_ID_Iso_Fall17_Loose'   )),
-    Variable('eid_mva_iso_wp90'    , lambda ele : ele.electronID('MVA_ID_Iso_Fall17_wp90'    )),
-    Variable('eid_mva_iso_wp80'    , lambda ele : ele.electronID('MVA_ID_Iso_Fall17_wp80'    )),
+    # Variable('eid_mva_noniso_loose', lambda ele : ele.electronID('MVA_ID_nonIso_Fall17_Loose')),
+    # Variable('eid_mva_noniso_wp90' , lambda ele : ele.electronID('MVA_ID_nonIso_Fall17_wp90' )),
+    # Variable('eid_mva_noniso_wp80' , lambda ele : ele.electronID('MVA_ID_nonIso_Fall17_wp80' )),
+    # Variable('eid_mva_iso_loose'   , lambda ele : ele.electronID('MVA_ID_Iso_Fall17_Loose'   )),
+    # Variable('eid_mva_iso_wp90'    , lambda ele : ele.electronID('MVA_ID_Iso_Fall17_wp90'    )),
+    # Variable('eid_mva_iso_wp80'    , lambda ele : ele.electronID('MVA_ID_Iso_Fall17_wp80'    )),
     Variable('eid_cut_tight'       , lambda ele : ele.cutBasedId('POG_FALL17_94X_v1_Tight'   )),
     Variable('eid_cut_medium'      , lambda ele : ele.cutBasedId('POG_FALL17_94X_v1_Medium'  )),
     Variable('eid_cut_loose'       , lambda ele : ele.cutBasedId('POG_FALL17_94X_v1_Loose'   )),
     Variable('n_hits_miss'         , lambda ele : ele.gsfTrack().hitPattern().numberOfLostHits(1), int),
     Variable('pass_conv_veto'      , lambda ele : ele.passConversionVeto()),
-    Variable('reliso05'            , lambda ele : ele.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0)),
-    Variable('reliso05_04'         , lambda lep : lep.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)),           Variable('reliso05_04'         , lambda ele : ele.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)),
-    Variable('reliso_rho_05'       , lambda ele : ele.relIsoFromEA(0.5)                       ),
+    Variable('reliso05_03'         , lambda ele : ele.relIso(cone_size=0.3, iso_type='dbeta', dbeta_factor=0.5, all_charged=0)),
+    Variable('reliso05_04'         , lambda lep : lep.relIso(cone_size=0.4, iso_type='dbeta', dbeta_factor=0.5, all_charged=0)),
     Variable('reliso_rho_04'       , lambda ele : ele.relIsoFromEA(0.4)                       ),
     Variable('reliso_rho_03'       , lambda ele : ele.relIsoFromEA(0.3)                       ),
     Variable('dEtaInSeed'          , lambda ele : ele.f_dEtaInSeed()                          ), 
@@ -410,11 +409,10 @@ vertex_vars = [
 
 # muon
 muon_vars = [
-    Variable('reliso_rho_05'              , lambda muon : muon.relIsoFromEA(0.5)                              ),
     Variable('reliso_rho_04'              , lambda muon : muon.relIsoFromEA(0.4)                              ),
     Variable('reliso_rho_03'              , lambda muon : muon.relIsoFromEA(0.3)                              ),
-    Variable('reliso_dB_05'               , lambda muon : muon.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)  ),
-    Variable('reliso_dB_05_03'            , lambda muon : muon.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0)  ),
+    Variable('reliso_dB_05_04'            , lambda muon : muon.relIso(cone_size=0.4, iso_type='dbeta', dbeta_factor=0.5, all_charged=0)  ),
+    Variable('reliso_dB_05_03'            , lambda muon : muon.relIso(cone_size=0.3, iso_type='dbeta', dbeta_factor=0.5, all_charged=0)  ),
     Variable('id_s'                       , lambda muon : muon.isSoftMuon(muon.associatedVertex)              ),
     Variable('id_l'                       , lambda muon : muon.muonID('POG_ID_Loose')                         ),
     Variable('id_m'                       , lambda muon : muon.muonID('POG_ID_Medium')                        ),

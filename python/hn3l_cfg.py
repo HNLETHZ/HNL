@@ -54,12 +54,14 @@ def generateKeyConfigs(samples,production, promptLeptonType, L1L2LeptonType, isD
             sample.triggers += ['HLT_Ele115_CaloIdVT_GsfTrkIdT_v%d'  %i for i in range(1, 15)] #electron trigger
             sample.triggers += ['HLT_Ele135_CaloIdVT_GsfTrkIdT_v%d'  %i for i in range(1, 15)] #electron trigger
             sample.splitFactor = splitFactor(sample, 2e5)
+    # triggers same for 2018: https://tomc.web.cern.ch/tomc/triggerPrescales/2018//?match=Ele
     if promptLeptonType == 'mu':
         for sample in samples:
             sample.triggers  = ['HLT_IsoMu24_v%d' %i for i in range(1, 15)] #muon trigger
             sample.triggers += ['HLT_IsoMu27_v%d' %i for i in range(1, 15)] #muon trigger
             sample.triggers += ['HLT_Mu50_v%d'    %i for i in range(1, 15)] #muon trigger
             sample.splitFactor = splitFactor(sample, 2e5)
+    # triggers same for 2018: https://tomc.web.cern.ch/tomc/triggerPrescales/2018//?match=Ele
 
     selectedComponents = samples
 
@@ -392,7 +394,7 @@ def generateKeyConfigs(samples,production, promptLeptonType, L1L2LeptonType, isD
     from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
     from CMGTools.HNL.utils.EOSEventsWithDownload import EOSEventsWithDownload
     event_class = EOSEventsWithDownload if not preprocessor else Events
-    EOSEventsWithDownload.aggressive = 2 # always fetch if running on Wigner
+    #EOSEventsWithDownload.aggressive = 2 # always fetch if running on Wigner
     EOSEventsWithDownload.long_cache = getHeppyOption('long_cache', False)
 
     if preprocessor: preprocessor.prefetch = prefetch

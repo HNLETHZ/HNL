@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# tmp files
+tmp_heppy.py
+*.swp # vim swap files
+__init__.py
+
+
 #CRAB
 cfg/crab/*
 cfg/crab_NOTWORK/*

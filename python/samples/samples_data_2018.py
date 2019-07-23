@@ -22,12 +22,12 @@ json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/P
 # https://twiki.cern.ch/twiki/bin/viewauth/CMS/PdmVAnalysisSummaryTable
 # https://twiki.cern.ch/twiki/bin/view/CMS/EgHLTRunIISummary#2018_AN1
 
-Single_ele_2018A  = creator.makeDataComponent('Single_ele_2018A', '/EGamma/Run2018A-17Sep2018-v1/MINIAOD', 'CMS', '.*root', json, useAAA=True)
+Single_ele_2018A  = creator.makeDataComponent('Single_ele_2018A', '/EGamma/Run2018A-17Sep2018-v2/MINIAOD', 'CMS', '.*root', json, useAAA=True)
 Single_ele_2018B  = creator.makeDataComponent('Single_ele_2018B', '/EGamma/Run2018B-17Sep2018-v1/MINIAOD', 'CMS', '.*root', json, useAAA=True)
 Single_ele_2018C  = creator.makeDataComponent('Single_ele_2018C', '/EGamma/Run2018C-17Sep2018-v1/MINIAOD', 'CMS', '.*root', json, useAAA=True)
-Single_ele_2018D  = creator.makeDataComponent('Single_ele_2018D', '/EGamma/Run2018D-22Jan2019-v1/MINIAOD', 'CMS', '.*root', json, useAAA=True)
+Single_ele_2018D  = creator.makeDataComponent('Single_ele_2018D', '/EGamma/Run2018D-22Jan2019-v2/MINIAOD', 'CMS', '.*root', json, useAAA=True)
                                                                                                                             
-Single_mu_2018A   = creator.makeDataComponent('Single_mu_2018A' , '/SingleMuon/Run2018A-17Sep2018-v1/MINIAOD'    , 'CMS', '.*root', json, useAAA=True)
+Single_mu_2018A   = creator.makeDataComponent('Single_mu_2018A' , '/SingleMuon/Run2018A-17Sep2018-v2/MINIAOD'    , 'CMS', '.*root', json, useAAA=True)
 Single_mu_2018B   = creator.makeDataComponent('Single_mu_2018B' , '/SingleMuon/Run2018B-17Sep2018-v1/MINIAOD'    , 'CMS', '.*root', json, useAAA=True)
 Single_mu_2018C   = creator.makeDataComponent('Single_mu_2018C' , '/SingleMuon/Run2018C-17Sep2018-v1/MINIAOD'    , 'CMS', '.*root', json, useAAA=True)
 Single_mu_2018D   = creator.makeDataComponent('Single_mu_2018D' , '/SingleMuon/Run2018D-30Apr2019-v1/MINIAOD'    , 'CMS', '.*root', json, useAAA=True)
