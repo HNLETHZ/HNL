@@ -1,0 +1,1 @@
+Average weight_idiso   :   0.9973 +-   0.0000
