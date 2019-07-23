@@ -91,8 +91,7 @@ class HNLAnalyzer(Analyzer):
         # kinematics
         if not self.testLepKin(ele, pt, eta): return False
         # id
-        #set_trace()
-        #TODO uncomment this if not ele.electronID("MVA_ID_nonIso_Fall17_Loose"): return False
+        if not ele.electronID("MVA_ID_nonIso_Fall17_Loose"): return False
         # vertex
         if not self.testLepVtx(ele, dxy, dz): return False
         # passed
