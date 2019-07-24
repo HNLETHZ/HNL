@@ -5,6 +5,7 @@ This is the base analyzer going through data and trying to identify HNL->3L even
 import ROOT
 from itertools import product, combinations
 from math import sqrt, pow
+from os import environ
 import PhysicsTools.HeppyCore.framework.config as cfg
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
@@ -35,17 +36,27 @@ class HNLAnalyzer(Analyzer):
     def declareHandles(self): 
         super(HNLAnalyzer, self).declareHandles() 
 
-        self.handles['electrons'] = AutoHandle(('slimmedElectrons'             ,'','PAT' ), 'std::vector<pat::Electron>'                    )
-        self.handles['muons'    ] = AutoHandle(('slimmedMuons'                 ,'','PAT' ), 'std::vector<pat::Muon>'                        )
+        '''
+        # watch out for MC and data differences; not just muons, also electrons, photons & taus
+        # MC:   vector<pat::Muon>                     "slimmedMuons"              ""                "PAT"
+        # data: vector<pat::Muon>                     "slimmedMuons"              ""                "RECO"
+        '''
+        # if self.cfg_ana.isData == True:  prcs = 'RECO'
+        # if self.cfg_ana.isData == False: prcs = 'PAT'
+        if environ['IS_DATA'] == 'True':  prcs = 'RECO'
+        if environ['IS_DATA'] == 'False': prcs = 'PAT'
+    
+        self.handles['electrons'] = AutoHandle(('slimmedElectrons'             ,'', prcs ), 'std::vector<pat::Electron>'                    )
+        self.handles['muons'    ] = AutoHandle(('slimmedMuons'                 ,'', prcs ), 'std::vector<pat::Muon>'                        )
         self.handles['dsamuons' ] = AutoHandle(('displacedStandAloneMuons'     ,'','RECO'), 'std::vector<reco::Track>', mayFail=True        )
         self.handles['dgmuons'  ] = AutoHandle(('displacedGlobalMuons'         ,'','RECO'), 'std::vector<reco::Track>', mayFail=True        )
-        self.handles['photons'  ] = AutoHandle(('slimmedPhotons'               ,'','PAT' ), 'std::vector<pat::Photon>'                      )
-        self.handles['taus'     ] = AutoHandle(('slimmedTaus'                  ,'','PAT' ), 'std::vector<pat::Tau>'                         )
+        self.handles['photons'  ] = AutoHandle(('slimmedPhotons'               ,'', prcs ), 'std::vector<pat::Photon>'                      )
+        self.handles['taus'     ] = AutoHandle(('slimmedTaus'                  ,'', prcs ), 'std::vector<pat::Tau>'                         )
         self.handles['jets'     ] = AutoHandle( 'slimmedJets'                             , 'std::vector<pat::Jet>'                         )
-        self.handles['pvs'      ] = AutoHandle(('offlineSlimmedPrimaryVertices','','PAT' ), 'std::vector<reco::Vertex>'                     )
-        self.handles['svs'      ] = AutoHandle(('slimmedSecondaryVertices'     ,'','PAT' ), 'std::vector<reco::VertexCompositePtrCandidate>')
+        self.handles['pvs'      ] = AutoHandle(('offlineSlimmedPrimaryVertices','', prcs ), 'std::vector<reco::Vertex>'                     )
+        self.handles['svs'      ] = AutoHandle(('slimmedSecondaryVertices'     ,'', prcs ), 'std::vector<reco::VertexCompositePtrCandidate>')
         self.handles['beamspot' ] = AutoHandle(('offlineBeamSpot'              ,'','RECO'), 'reco::BeamSpot'                                )
-        self.handles['pfmet'    ] = AutoHandle(('slimmedMETs'                  ,'','PAT' ), 'std::vector<pat::MET>'                         )
+        self.handles['pfmet'    ] = AutoHandle(('slimmedMETs'                  ,'', prcs ), 'std::vector<pat::MET>'                         )
         self.handles['puppimet' ] = AutoHandle('slimmedMETsPuppi'                         , 'std::vector<pat::MET>'                         )
         self.handles['pfcand'   ] = AutoHandle('packedPFCandidates'                       , 'std::vector<pat::PackedCandidate> '            )
 

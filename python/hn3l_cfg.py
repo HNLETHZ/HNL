@@ -41,6 +41,10 @@ def generateKeyConfigs(samples,production, promptLeptonType, L1L2LeptonType, isD
     promptLeptonType = promptLeptonType # choose from 'ele' or 'mu'
     L1L2LeptonType = L1L2LeptonType  #choose from 'ee', 'mm', 'em'
 
+    os.environ['IS_DATA'  ] = 'True' if isData   else 'False'
+    os.environ['IS_SIGNAL'] = 'True' if isSignal else 'False' 
+
+
     ###################################################
     ###               HANDLE SAMPLES                ###
     ###################################################

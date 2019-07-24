@@ -1,6 +1,7 @@
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from pdb import set_trace
+from os import environ
 
 class METFilter(Analyzer):
 
@@ -12,7 +13,9 @@ class METFilter(Analyzer):
 
     def declareHandles(self):
         super(METFilter, self).declareHandles()
-        self.handles['TriggerResults'] = AutoHandle(('TriggerResults', '', self.processName), 'edm::TriggerResults', fallbackLabel=('TriggerResults', '', 'PAT')) # fallback for FastSim
+        if environ['IS_DATA'] == 'True':  prcs = 'RECO'
+        if environ['IS_DATA'] == 'False': prcs = 'PAT'
+        self.handles['TriggerResults'] = AutoHandle(('TriggerResults', '', self.processName), 'edm::TriggerResults', fallbackLabel=('TriggerResults', '', prcs)) # fallback for FastSim
 #        self.handles['badChargedHadronFilter'] = AutoHandle('BadChargedCandidateFilter', 'bool', mayFail=True)
 #        self.handles['badPFMuonFilter'] = AutoHandle('BadPFMuonFilter', 'bool', mayFail=True)
 
