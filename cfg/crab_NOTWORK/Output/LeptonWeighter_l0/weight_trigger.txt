@@ -1,0 +1,1 @@
+Average weight_trigger :   0.9753 +-   0.0002

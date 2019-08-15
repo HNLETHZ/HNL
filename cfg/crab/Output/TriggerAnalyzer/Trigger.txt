@@ -1,0 +1,10 @@
+Counter Trigger :
+	 All events                                   86172 	 1.00 	 1.0000
+	 HLT                                          26124 	 0.30 	 0.3032
+	 HLT_Mu50                                     15856 	 0.61 	 0.1840
+	 HLT_IsoMu24                                  25839 	 1.63 	 0.2999
+	 HLT_IsoMu27                                  24962 	 0.97 	 0.2897
+	 HLT_Mu50 prescaled                               0 	 0.00 	 0.0000
+	 HLT_IsoMu24 prescaled                            0 	 -1.00 	 0.0000
+	 HLT_IsoMu27 prescaled                            0 	 -1.00 	 0.0000
+

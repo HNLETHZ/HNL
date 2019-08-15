@@ -1,0 +1,12 @@
+Counter events :
+	 all events                                    8939 	 1.00 	 1.0000
+	 pass Flag_goodVertices                        8939 	 1.00 	 1.0000
+	 pass Flag_globalSuperTightHalo2016Filter      8939 	 1.00 	 1.0000
+	 pass Flag_HBHENoiseFilter                     8937 	 1.00 	 0.9998
+	 pass Flag_HBHENoiseIsoFilter                  8938 	 1.00 	 0.9999
+	 pass Flag_EcalDeadCellTriggerPrimitiveFilter      8939 	 1.00 	 1.0000
+	 pass Flag_BadPFMuonFilter                     8936 	 1.00 	 0.9997
+	 pass Flag_BadChargedCandidateFilter           8939 	 1.00 	 1.0000
+	 pass Flag_eeBadScFilter                       8939 	 1.00 	 1.0000
+	 pass Flag_ecalBadCalibFilter                  8938 	 1.00 	 0.9999
+

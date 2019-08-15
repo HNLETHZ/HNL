@@ -1,0 +1,7 @@
+Counter jets :
+	 all events                                    8939 	 1.00 	 1.0000
+	 at least 2 good jets                          8520 	 0.95 	 0.9531
+	 at least 2 clean jets                         3366 	 0.40 	 0.3766
+	 at least 1 b jet                              4887 	 1.45 	 0.5467
+	 at least 2 b jets                             1001 	 0.20 	 0.1120
+

@@ -1,0 +1,1 @@
+Average weight_tracking:   1.0000 +-   0.0000

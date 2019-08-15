@@ -1,0 +1,13 @@
+Counter HNL :
+	 all events                                   26124 	 1.00 	 1.0000
+	 good pf collections                          26124 	 1.00 	 1.0000
+	 >0 good vtx                                  26124 	 1.00 	 1.0000
+	 >= 3 leptons                                 24012 	 0.92 	 0.9192
+	 >= 3 leptons with correct flavor combo       22546 	 0.94 	 0.8630
+	 enough electrons passing preselection        22546 	 1.00 	 0.8630
+	 enough muons passing preselection            11768 	 0.52 	 0.4505
+	 >0 prompt lep                                11626 	 0.99 	 0.4450
+	 >0 trig match prompt lep                     11584 	 1.00 	 0.4434
+	 > 0 di-lepton                                11562 	 1.00 	 0.4426
+	 > 0 di-lepton + vtx                           8939 	 0.77 	 0.3422
+

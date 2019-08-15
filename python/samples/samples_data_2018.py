@@ -17,6 +17,7 @@ creator = ComponentCreator()
 # TODO json taken from here, probably needs update https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt
 #try: json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
 json = '$CMSSW_BASE/src/CMGTools/HNL/data/golden_but_json.txt'
+
 # Luminosity:59.69 /fb 
 
 

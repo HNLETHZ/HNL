@@ -5,6 +5,16 @@ __pycache__/
 __init__.py
 *_david*
 
+# tmp files
+tmp_heppy.py
+*.swp # vim swap files
+__init__.py
+
+
+#CRAB
+cfg/crab/*
+cfg/crab_NOTWORK/*
+
 # C extensions
 *.so
 
